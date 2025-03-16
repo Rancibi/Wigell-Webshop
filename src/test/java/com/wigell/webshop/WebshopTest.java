@@ -2,6 +2,7 @@ package com.wigell.webshop;
 
 import com.wigell.webshop.models.*;
 import com.wigell.webshop.models.clothes.*;
+import com.wigell.webshop.patterns.builder.*;
 import com.wigell.webshop.services.OrderService;
 
 public class WebshopTest {
@@ -22,15 +23,29 @@ public class WebshopTest {
         Order order = new Order(101, customer);
 
         // Lägg till kläder
-        Pants pants = new Pants(1, "M", "Bomull", "Blå", 499.99, "Slim", "Lång");
-        TShirt tshirt = new TShirt(2, "L", "Polyester", "Röd", 299.99, "Kort", "V-ringad");
+        Pants pants = new PantsBuilder()
+                .setSize("M")
+                .setMaterial("Bomull")
+                .setColor("Blå")
+                .setFit("Slim")
+                .setLength("Lång")
+                .build();
+
+        TShirt tshirt = new TShirtBuilder()
+                .setSize("L")
+                .setMaterial("Polyester")
+                .setColor("Röd")
+                .setSleeves("Kort")
+                .setNeck("V-ringad")
+                .build();
 
         order.addClothes(pants);
         order.addClothes(tshirt);
 
         // Lägg ordern
-        orderService.placeOrder(order);
-
+        for (Clothes clothes : order.getClothesList()) {
+            orderService.placeOrder(order, clothes);
+        }
         // Slutför ordern
         orderService.completeOrder(101);
     }

@@ -13,6 +13,6 @@ public class DecorateCommand implements Command {
 
     @Override
     public void execute() {
-        System.out.println("Dekorerar " + clothes.getName() + " med: " + decoration);
+        clothes.setDecoration(decoration);
     }
 }

@@ -2,6 +2,7 @@ package com.wigell.webshop.patterns.command;
 
 import com.wigell.webshop.models.clothes.*;
 import com.wigell.webshop.models.CEO;
+import com.wigell.webshop.patterns.builder.PantsBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -15,8 +16,14 @@ public class FinalizeCommandTest {
     void testExecute() {
 
         CEO ceo = new CEO("Lars Wigell");
-        Pants pants = new Pants(1, "M", "Bomull", "Blå", 499.99, "Slim", "Lång");
-        FinalizeCommand command = new FinalizeCommand(pants, ceo);
+        Pants pants = new PantsBuilder()
+                .setSize("M")
+                .setMaterial("Bomull")
+                .setColor("Blå")
+                .setFit("Slim")
+                .setLength("Lång")
+                .build();
+        FinalizeCommand command = new FinalizeCommand(pants);
 
         ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));

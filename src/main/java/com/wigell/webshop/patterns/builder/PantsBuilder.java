@@ -7,6 +7,7 @@ public class PantsBuilder implements ClothesBuilder {
 
     public PantsBuilder() {
         this.pants = new Pants();
+        pants.setPrice(499.99);
     }
 
     @Override

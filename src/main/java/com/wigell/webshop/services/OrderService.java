@@ -36,12 +36,12 @@ public class OrderService {
         }
     }
 
-    public void placeOrder(Order order) {
+    public void placeOrder(Order order, Clothes clothes) {
         orders.add(order);
-        notifyObservers("Plagg tillverkas, Order #" + order.getId() + " har lagts av " + order.getCustomer().getName());
+        notifyObservers("Plagg tillverkas - " + clothes.getName() + " åt kund " + order.getCustomer().getName() + "\n");
     }
 
-    public static void decorateOrder(Order order) {
+    public void decorateOrder(Order order) {
         CommandInvoker invoker = new CommandInvoker();
 
         for (Clothes c : order.getClothesList()) {
@@ -53,11 +53,19 @@ public class OrderService {
             } else if (c instanceof Skirt) {
                 decoration = "Lägger spetskant och formar tyget";
             }
-
             invoker.addCommand(new DecorateCommand(c, decoration));
         }
 
         invoker.executeCommands();
+
+        for (Clothes c : order.getClothesList()) {
+            System.out.println("Dekorerar " + c.getName() + " med " + c.getDecoration());
+        }
+        System.out.println("");
+
+        for (Clothes c : order.getClothesList()) {
+            notifyObservers("Plagget '" + c.getName() + "' är klart för leverans!");
+        }
     }
 
     public void completeOrder(int orderId) {
@@ -65,14 +73,14 @@ public class OrderService {
             if (order.getId() == orderId) {
                 order.completeOrder();
                 CommandInvoker invoker = new CommandInvoker();
-                CEO ceo = new CEO("Lars Wigell");
 
                 for (Clothes c : order.getClothesList()) {
-                    invoker.addCommand(new FinalizeCommand(c, ceo));
+                    invoker.addCommand(new FinalizeCommand(c));
                 }
 
                 invoker.executeCommands();
-                notifyObservers("Order #" + orderId + " är redo för leverans!");
+
+                notifyObservers("Order #" + orderId + " åt kund" + order.getCustomer().getName() + " är redo för leverans!");
                 return;
             }
         }

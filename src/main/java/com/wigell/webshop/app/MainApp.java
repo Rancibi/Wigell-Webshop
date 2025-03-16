@@ -2,6 +2,9 @@ package com.wigell.webshop.app;
 
 import com.wigell.webshop.models.*;
 import com.wigell.webshop.models.clothes.*;
+import com.wigell.webshop.patterns.builder.PantsBuilder;
+import com.wigell.webshop.patterns.builder.SkirtBuilder;
+import com.wigell.webshop.patterns.builder.TShirtBuilder;
 import com.wigell.webshop.services.OrderService;
 
 import java.util.Scanner;
@@ -21,6 +24,10 @@ public class MainApp {
 
     public static void main(String[] args) {
         orderService = OrderService.getInstance();
+
+        CEO ceo = new CEO("Lars Wigell");
+        orderService.addObserver(ceo);
+
         System.out.println("📢 Välkommen till Wigell Webshop! 📢");
         scanner = new Scanner(System.in);
 
@@ -48,7 +55,9 @@ public class MainApp {
             Clothes clothes = chooseClothes();
             if (clothes != null) {
                 order.addClothes(clothes);
-                System.out.println("✅ " + clothes.getName() + " har lagts till i din beställning.\n");
+                System.out.println("✅ " + clothes.getName() + " har lagts till i din beställning.");
+
+                orderService.placeOrder(order, clothes);
             }
             addingMore = promptYesNo("Vill du beställa fler plagg? (ja/nej): ");
         }
@@ -61,7 +70,7 @@ public class MainApp {
             scanner.nextLine();
         }
 
-        orderService.placeOrder(order);
+        orderService.completeOrder(order.getId());
         Receipt receipt = new Receipt(order);
         System.out.println("\n📜 Ditt kvitto:");
         System.out.println(receipt);
@@ -69,9 +78,9 @@ public class MainApp {
 
     public static Clothes chooseClothes() {
         System.out.println("\n📌 Välj typ av plagg:");
-        System.out.println("1. Byxor (499.99 kr)");
-        System.out.println("2. T-shirt (299.99 kr)");
-        System.out.println("3. Kjol (399.99 kr)");
+        System.out.println("1. Byxor");
+        System.out.println("2. T-shirt");
+        System.out.println("3. Kjol");
 
         int choice = promptInt("Ditt val (1-3): ", 1, 3);
 
@@ -83,17 +92,35 @@ public class MainApp {
             case 1:
                 String fit = promptChoice("Välj passform", new String[]{"Slim", "Regular"});
                 String length = promptChoice("Välj längd", new String[]{"Kort", "Lång"});
-                return new Pants(1, size, material, color, 499.99, fit, length);
+                return new PantsBuilder()
+                        .setSize(size)
+                        .setMaterial(material)
+                        .setColor(color)
+                        .setFit(fit)
+                        .setLength(length)
+                        .build();
 
             case 2:
                 String sleeves = promptChoice("Välj ärmlängd", new String[]{"Kort", "Lång"});
                 String neck = promptChoice("Välj halsringning", new String[]{"Rund", "V-ringad"});
-                return new TShirt(2, size, material, color, 299.99, sleeves, neck);
+                return new TShirtBuilder()
+                        .setSize(size)
+                        .setMaterial(material)
+                        .setColor(color)
+                        .setSleeves(sleeves)
+                        .setNeck(neck)
+                        .build();
 
             case 3:
                 String waistline = promptChoice("Välj midja", new String[]{"Hög", "Låg"});
                 String pattern = promptChoice("Välj mönster", new String[]{"Prickig", "Randig"});
-                return new Skirt(3, size, material, color, 399.99, waistline, pattern);
+                return new SkirtBuilder()
+                        .setSize(size)
+                        .setMaterial(material)
+                        .setColor(color)
+                        .setWaistline(waistline)
+                        .setPattern(pattern)
+                        .build();
 
             default:
                 System.out.println("⚠ Ogiltigt val!");

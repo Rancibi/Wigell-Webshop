@@ -1,23 +1,15 @@
 package com.wigell.webshop.models.clothes;
 
 public abstract class Clothes {
-    private int id;
     private String name;
     private String size;
     private String material;
     private String color;
+    private String decoration;
+    private boolean finalized = false;
     private double price;
 
     public Clothes() {}
-
-    public Clothes(int id, String name, String size, String material, String color, double price) {
-        this.id = id;
-        this.name = name;
-        this.size = size;
-        this.material = material;
-        this.color = color;
-        this.price = price;
-    }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -32,6 +24,13 @@ public abstract class Clothes {
     public void setColor(String color) { this.color = color; }
 
     public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public String getDecoration() { return decoration; }
+    public void setDecoration(String decoration) { this.decoration = decoration; }
+
+    public void finalizeClothes(){ this.finalized = true; }
+    public boolean isFinalized() { return finalized; }
 
     @Override
     public String toString() {

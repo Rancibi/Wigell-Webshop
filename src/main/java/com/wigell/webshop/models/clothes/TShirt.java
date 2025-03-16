@@ -8,12 +8,6 @@ public class TShirt extends Clothes {
         setName("T-shirt");
     }
 
-    public TShirt(int id, String size, String material, String color, double price, String sleeves, String neck) {
-        super(id, "T-shirt", size, material, color, price);
-        this.sleeves = sleeves;
-        this.neck = neck;
-    }
-
     public String getSleeves() { return sleeves; }
     public void setSleeves(String sleeves) { this.sleeves = sleeves; }
 

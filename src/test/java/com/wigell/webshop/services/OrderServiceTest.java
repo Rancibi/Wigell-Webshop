@@ -2,11 +2,13 @@ package com.wigell.webshop.services;
 
 import com.wigell.webshop.models.*;
 import com.wigell.webshop.models.clothes.*;
+import com.wigell.webshop.patterns.builder.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 public class OrderServiceTest {
@@ -16,6 +18,7 @@ public class OrderServiceTest {
     private CEO ceoObserver;
     private Pants pants;
     private TShirt tshirt;
+    private Skirt skirt;
 
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
@@ -26,9 +29,31 @@ public class OrderServiceTest {
         customer = new Customer(1, "Test Kund", "Testgatan 1", "test@example.com");
         order = new Order(100, customer);
         ceoObserver = new CEO("Lars Wigell");
+        System.setOut(new PrintStream(outputStreamCaptor));
 
-        pants = new Pants(1, "M", "Bomull", "Blå", 499.99, "Slim", "Lång");
-        tshirt = new TShirt(2, "L", "Polyester", "Röd", 299.99, "Kort", "V-ringad");
+        pants = new PantsBuilder()
+                .setSize("M")
+                .setMaterial("Bomull")
+                .setColor("Blå")
+                .setFit("Slim")
+                .setLength("Lång")
+                .build();
+
+        tshirt = new TShirtBuilder()
+                .setSize("L")
+                .setMaterial("Polyester")
+                .setColor("Röd")
+                .setSleeves("Kort")
+                .setNeck("V-ringad")
+                .build();
+
+        skirt = new SkirtBuilder()
+                .setSize("S")
+                .setMaterial("Siden")
+                .setColor("Svart")
+                .setWaistline("Hög")
+                .setPattern("Randig")
+                .build();
     }
 
     @Test
@@ -41,7 +66,10 @@ public class OrderServiceTest {
     @Test
     void testAddObserver() {
         orderService.addObserver(ceoObserver);
-        assertDoesNotThrow(() -> orderService.placeOrder(order),
+
+        Clothes testClothes = new Pants();
+
+        assertDoesNotThrow(() -> orderService.placeOrder(order, testClothes),
                 "Observern ska kunna ta emot notifieringar vid orderläggning");
     }
 
@@ -51,7 +79,10 @@ public class OrderServiceTest {
         order.addClothes(pants);
         order.addClothes(tshirt);
 
-        orderService.placeOrder(order);
+        for (Clothes clothes : order.getClothesList()) {
+            orderService.placeOrder(order, clothes);
+        }
+
         List<Order> orders = orderService.getOrders();
 
         assertEquals(1, orders.size(), "Orderlistan ska innehålla 1 order");
@@ -65,7 +96,9 @@ public class OrderServiceTest {
         order.addClothes(pants);
         order.addClothes(tshirt);
 
-        orderService.placeOrder(order);
+        for (Clothes clothes : order.getClothesList()) {
+            orderService.placeOrder(order, clothes);
+        }
 
         assertFalse(order.isCompleted(), "Ordern ska INTE vara färdig direkt efter beställning");
 
@@ -85,7 +118,6 @@ public class OrderServiceTest {
     @Test
     void testDecorateOrder_Pants() {
         Order order = new Order(101, new Customer(1, "TestUser", "TestAddress", "TestEmail"));
-        Pants pants = new Pants(1, "M", "Bomull", "Blå", 499.99, "Regular", "Lång");
         order.addClothes(pants);
 
         orderService.decorateOrder(order);
@@ -96,8 +128,7 @@ public class OrderServiceTest {
     @Test
     void testDecorateOrder_TShirt() {
         Order order = new Order(101, new Customer(1, "TestUser", "TestAddress", "TestEmail"));
-        TShirt tShirt = new TShirt(2, "L", "Polyester", "Röd", 299.99, "Kort", "V-ringad");
-        order.addClothes(tShirt);
+        order.addClothes(tshirt);
 
         orderService.decorateOrder(order);
 
@@ -107,7 +138,6 @@ public class OrderServiceTest {
     @Test
     void testDecorateOrder_Skirt() {
         Order order = new Order(101, new Customer(1, "TestUser", "TestAddress", "TestEmail"));
-        Skirt skirt = new Skirt(3, "S", "Siden", "Svart", 399.99, "Hög", "Randig");
         order.addClothes(skirt);
 
         orderService.decorateOrder(order);

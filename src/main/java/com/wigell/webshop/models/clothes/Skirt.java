@@ -8,12 +8,6 @@ public class Skirt extends Clothes {
         setName("Kjol");
     }
 
-    public Skirt(int id, String size, String material, String color, double price, String waistline, String pattern) {
-        super(id, "Kjol", size, material, color, price);
-        this.waistline = waistline;
-        this.pattern = pattern;
-    }
-
     public String getWaistline() { return waistline; }
     public void setWaistline(String waistline) { this.waistline = waistline; }
 

@@ -1,6 +1,7 @@
 package com.wigell.webshop.models;
 
 import com.wigell.webshop.models.clothes.*;
+import com.wigell.webshop.patterns.builder.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +22,29 @@ public class ReceiptTest {
         customer = new Customer(1, "Test Kund", "Testgatan 1", "test@example.com");
         order = new Order(101, customer);
 
-        pants = new Pants(1, "M", "Bomull", "Blå", 499.99, "Slim", "Lång");
-        tshirt = new TShirt(2, "L", "Polyester", "Röd", 299.99, "Kort", "V-ringad");
-        skirt = new Skirt(3, "S", "Siden", "Svart", 399.99, "Hög", "Prickig");
+        pants = new PantsBuilder()
+                .setSize("M")
+                .setMaterial("Bomull")
+                .setColor("Blå")
+                .setFit("Slim")
+                .setLength("Lång")
+                .build();
+
+        tshirt = new TShirtBuilder()
+                .setSize("L")
+                .setMaterial("Polyester")
+                .setColor("Röd")
+                .setSleeves("Kort")
+                .setNeck("V-ringad")
+                .build();
+
+        skirt = new SkirtBuilder()
+                .setSize("S")
+                .setMaterial("Siden")
+                .setColor("Svart")
+                .setWaistline("Hög")
+                .setPattern("Prickig")
+                .build();
 
         order.addClothes(pants);
         order.addClothes(tshirt);

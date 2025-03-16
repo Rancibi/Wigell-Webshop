@@ -127,7 +127,7 @@ public class MainAppTest {
         setUserInput("TestUser\nTestAddress\nTestEmail\nja\n1\nM\nBomull\nBlå\nRegular\nLång\nnej\n\n");
         MainApp.setOrderService(orderService);
         MainApp.runShop();
-        verify(orderService, atLeastOnce()).placeOrder(any(Order.class));
+        verify(orderService, atLeastOnce()).placeOrder(any(Order.class), any(Clothes.class));
         assertTrue(outputStreamCaptor.toString().contains("📜 Ditt kvitto:"));
     }
 
